@@ -1,9 +1,6 @@
 import unittest
-from main import TokenCreator, ExpressionValidator
-from exceptions import (
-                        NotPairedBracketError,
-                        LettersFoundError,
-)
+from classes import TokenCreator, ExpressionValidator
+from exceptions import NotPairedBracketError, LettersFoundError
 
 class TestTokenCreator(unittest.TestCase):
 
