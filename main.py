@@ -43,7 +43,7 @@ class Counter:
 						self._count_nonbracket_exp(right),
 					)
 	def _count_exp(self, tokens):
-		if tokens.count('(') is not None:
+		if tokens.count('(') != 0:
 			for _ in range(tokens.count('(')):
 				deepest_opened_bracket = self._rfind(tokens, '(')
 				deepest_closed_bracket = self._find(tokens[deepest_opened_bracket:], ')')
@@ -66,7 +66,8 @@ class Counter:
 
 	def get_result(self):
 		tokens = self.tokens
+		print(self.tokens)
 		return self._count_exp(tokens)
 		
-a = Counter('10+5*2-(2+9*2)+1').get_result()
+a = Counter('5+2*(3+2)').get_result()
 print(a)
