@@ -2,22 +2,20 @@ from exceptions import NotPairedBracketError, LettersFoundError
 from string import ascii_letters
 import functions
 
-class ExpressionModifier:
-	def __init__(self, expression):
-		self.expression = expression
-
-	def _replace_functions_mtbracket_epi(self):
-		return functions.replacer(self.expression)
-
-	def modifiy(self):
-		return self._replace_functions_mtbracket_epi()
-
 class ExpressionValidator:
+	"""
+	Проверяет введеное выражение на парность скобов и латинские буквы.
+
+	"""
 	def __init__(self, expression):
 		self.expression = expression
 
 
 	def _count_matches(self, expression, match):
+		"""
+		Считает количество вхождений в строке
+
+		"""
 		counter = 0
 		for element in expression:
 			if element == match:
@@ -26,30 +24,39 @@ class ExpressionValidator:
 
 	
 	def _are_brackets_paired(self):
+		"""
+		Считает количество открывающихся и закрывающихся скобок, бросает исключение если есть скобка без пары.
+
+		"""
 		if self._count_matches(self.expression, '(') != self._count_matches(self.expression, ')'):
 			raise NotPairedBracketError
 		else:
 			pass
 
 	def _are_there_letters(self):
+		"""
+		Проверяет есть ли латинские буквы в веденном выражении, бросает исключение если есть в выражении.
+
+		"""
 		for char in self.expression:
 			if char in ascii_letters:
 				raise LettersFoundError
 		else:
 			pass
 
-	def _are_there_mtbrackets(self):
-		counter = 0
-		for element in expression:
-			if element == match:
-				counter += 1
-		return counter
-
 	def check(self):
+		"""
+		Мейн интерфейс, просто прогоняет проверочку по методам, если не все ок - выдает эксепшн.
+
+		"""
 		self._are_brackets_paired()
 		self._are_there_letters()
 
 class TokenCreator:
+	"""
+	Создает нормальные для обработки токены из выражения.
+
+	"""
 	def _replace_minusnum_wnegative(self, tokens):
 		"""
 		Ищет минус и  число в скобках и заменяет их вместе со скобками на отрицательное число.
@@ -71,6 +78,10 @@ class TokenCreator:
 				return z
 
 	def _replace_all_minsum_wnegative(self, tokens):
+		"""
+		Заменяет разбитые отрицательные числа на реальные отрицательные числа во всем выражении и убирает скобки.
+
+		"""
 		neg_num = self._count_neg_nums(tokens)
 
 		for _ in range(neg_num):
@@ -99,7 +110,8 @@ class TokenCreator:
 
 	def _count_neg_nums(self, tokens):
 		"""
-		Считаем количество отрицательных чисел.
+		Считаем количество отрицательных чисел
+
 		"""
 		neg_num_counter = 0
 		for index, element in enumerate(tokens):
@@ -120,21 +132,37 @@ class TokenCreator:
 		self.ExpressionValidator = ExpressionValidator(expression)
 
 class Counter:
+	"""
+	Основной класс для счета выражений.
+
+	"""
 	def __init__(self, expression):
 		self.expression = expression
 		self.tokens = TokenCreator(expression).get_tokens()
 
 	def _find(self,tokens, match):
+		"""
+		Ищем первое вхождение элемента и возвращаем индекс.
+
+		"""
 		for index, element in enumerate(tokens):
 			if match == element:
 				return index
 
 	def _rfind(self,tokens, match):
+		"""
+		Ищем Последнее вхождение элемента и возвращаем индекс.
+
+		"""
 		for index, element in enumerate(tokens[::-1]):
 			if match == element:
 				return len(tokens)-index-1
 
-	def _count_nonbracket_exp(self, tokens): 
+	def _count_nonbracket_exp(self, tokens):
+		"""
+		Считает простейшие выражения без скобок.
+
+		"""
 		for operator, function in functions.binary_operators.items():
 			if self._find(tokens, operator) is not None:
 				left = tokens[:self._find(tokens, operator)]
@@ -161,6 +189,10 @@ class Counter:
 						self._count_nonbracket_exp(right),
 					)
 	def _count_exp(self, tokens):
+		"""
+		Считает выражения со скобками
+
+		"""
 		if tokens.count('(') != 0:
 			for _ in range(tokens.count('(')):
 				deepest_opened_bracket = self._rfind(tokens, '(')
@@ -183,18 +215,13 @@ class Counter:
 
 
 	def get_result(self):
+		"""
+		Выдает результат
+
+		"""
 		tokens = self.tokens
-		return self._count_exp(tokens)
-
-# class ExpressionModifier:
-# 	def __init__(self, expression):
-# 		self.expression = expression
-
-# 	def _replace_functions_mtbracket_epi(self):
-# 		return functions.replacer(self.expression)
-
-# 	def modifiy(self):
-# 		return self._replace_functions_mtbracket_epi()
-
-# # a = ExpressionModifier('1--1+sin(1)+()-1').modifiy()
-# # print(a)
+		try:
+			result = self._count_exp(self.tokens)
+			return result
+		except Exception:
+			return None

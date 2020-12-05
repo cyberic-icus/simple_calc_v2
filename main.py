@@ -25,6 +25,6 @@ if __name__ == '__main__':
 			continue
 
 		except Exception as e:
-			print('Хз че случилось')
+			print('Либо ты ошибся в написании выражении, либо ты чем-то не тем занимаешься...')
 			my_input = str(input("Введите ваше выражение:"))
 			continue

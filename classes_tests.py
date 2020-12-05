@@ -1,9 +1,8 @@
-import unittest
-from classes import TokenCreator, ExpressionValidator
+from classes import TokenCreator, ExpressionValidator, Counter
 from exceptions import NotPairedBracketError, LettersFoundError
+import unittest
 
 class TestTokenCreator(unittest.TestCase):
-
     def test_tokenizing(self):
         expressions = (
             '(-20)+2*(12+(-1))-10',
@@ -21,7 +20,6 @@ class TestTokenCreator(unittest.TestCase):
             self.assertEqual(TokenCreator(exp).get_tokens(), res)
 
 class TestExpressionValidator(unittest.TestCase):
-
     def test_paired_bracket_validation(self):
         expressions = (
             '(-20+2*(12+(-1))-10',
@@ -40,6 +38,35 @@ class TestExpressionValidator(unittest.TestCase):
         for exp in expressions:
             self.assertRaises(LettersFoundError, TokenCreator(exp).get_tokens)
 
+    def test_not_paired_bracket_validation(self):
+        expressions = (
+            '((-20+2*(12+(-1))-10',
+            '1000*10-124+18-1412))',
+            '(-2)*-2)*100)',
+        )
+
+        for exp in expressions:
+            self.assertRaises(NotPairedBracketError, TokenCreator(exp).get_tokens)
+
+class TestCounter(unittest.TestCase):
+    def test_counting(self):
+        exps_res = ( # Спасибо Назарову Никите, за написанные выражения!
+            ('4+1', 5),
+            ('(-1)*(-1)+5', 6),
+            ('4/2', 2),
+            ('2/1', 2),
+            ('(2*2)/2', 2),
+            ('6*(-1)+5', -1),
+            ('3+3', 6),
+            ('(-1)+1', 0),
+            ('0+1+1', 2),
+            ('0+(-1)', -1),
+        )
+       
+        for exp in exps_res:
+            self.assertEqual(exp[1], Counter(exp[0]).get_result())
+
+    
 
 if __name__ == '__main__':
     unittest.main()
